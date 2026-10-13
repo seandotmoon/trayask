@@ -39,15 +39,15 @@ jobs:
             xclip \
             wl-clipboard
 
-      - name: Cargo test
-        working-directory: src-tauri
-        run: cargo test
-
       - name: Install frontend dependencies
         run: pnpm install
 
       - name: Build frontend
         run: pnpm build
+
+      - name: Cargo test
+        working-directory: src-tauri
+        run: cargo test
 
       - name: Build app
         uses: tauri-apps/tauri-action@v0

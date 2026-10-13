@@ -22,12 +22,15 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
+      - name: Install frontend dependencies
+        run: pnpm install
+
+      - name: Build frontend
+        run: pnpm build
+
       - name: Cargo test
         working-directory: src-tauri
         run: cargo test
 
-      - name: Build frontend and app
-        run: |
-          pnpm install
-          pnpm build
-          pnpm tauri build
+      - name: Build app
+        run: pnpm tauri build
