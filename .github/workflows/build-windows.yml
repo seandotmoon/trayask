@@ -1,0 +1,34 @@
+name: build-windows
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: trayask/pnpm-lock.yaml
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Cargo test
+        working-directory: trayask/src-tauri
+        run: cargo test
+
+      - name: Build frontend and app
+        working-directory: trayask
+        run: |
+          pnpm install
+          pnpm build
+          pnpm tauri build

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "TrayAsk",
+  "version": "0.1.0",
+  "identifier": "com.trayask.app",
+  "build": {
+    "devUrl": "http://localhost:1420",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "panel",
+        "title": "TrayAsk",
+        "width": 380,
+        "height": 560,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "visible": false,
+        "focus": true,
+        "skipTaskbar": true
+      },
+      {
+        "label": "settings",
+        "title": "TrayAsk Settings",
+        "width": 520,
+        "height": 480,
+        "visible": false
+      },
+      {
+        "label": "help",
+        "title": "TrayAsk Help",
+        "width": 520,
+        "height": 560,
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "plugins": {
+    "updater": {
+      "active": true,
+      "dialog": false,
+      "endpoints": [
+        "https://github.com/OWNER/REPO/releases/latest/download/latest.json"
+      ],
+      "pubkey": ""
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["deb", "appimage", "dmg", "msi", "nsis"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "Utility",
+    "windows": {
+      "webviewInstallMode": { "type": "embedBootstrapper" },
+      "wix": { "language": "en-US" }
+    },
+    "linux": {
+      "deb": {
+        "depends": ["libwebkit2gtk-4.1-0", "libayatana-appindicator3-1"]
+      }
+    }
+  }
+}

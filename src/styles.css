@@ -1,0 +1,817 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, sans-serif;
+  --accent: #4c8dff;
+  --accent-soft: rgba(76, 141, 255, 0.16);
+  --ok: #30c48d;
+  --err: #ff6b6b;
+  --warn: #f5a524;
+  --card-tint: rgba(76, 141, 255, 0.06);
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+html {
+  background: transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0.9rem;
+  height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+  flex-shrink: 0;
+}
+
+/* Panel window chrome: rounded bordered window over a transparent
+   webview (panel has `transparent: true` in tauri.conf.json). The
+   settings window keeps its native decorations + opaque background. */
+.container.panel-window {
+  background: Canvas;
+  border: 1px solid rgba(127, 127, 127, 0.4);
+  border-radius: 12px;
+}
+
+.container.settings-window {
+  background: Canvas;
+}
+
+.container.panel-window.is-maximized {
+  border-radius: 0;
+  border-width: 0;
+  /* Fill the maximized window: without this the 640px cap + auto margins
+     squeeze everything into a narrow centered strip (B-10). */
+  max-width: none;
+}
+
+/* Panel titlebar: full-bleed bar with separator, like a native toolbar. */
+.titlebar {
+  display: flex;
+  align-items: center;
+  margin: -0.9rem -0.9rem 0.6rem;
+  padding: 0.55rem 0.8rem;
+  min-height: calc(12px + 1.1rem);
+  box-sizing: border-box;
+  background: rgba(127, 127, 127, 0.18);
+  border-bottom: 1px solid rgba(127, 127, 127, 0.3);
+  border-radius: 11px 11px 0 0;
+  flex-shrink: 0;
+}
+
+.titlebar.mac {
+  justify-content: flex-start;
+}
+
+.titlebar:not(.mac) {
+  justify-content: flex-end;
+}
+
+.container.panel-window.is-maximized .titlebar {
+  border-radius: 0;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tab {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.tab.active {
+  font-weight: 700;
+  background: rgba(127, 127, 127, 0.15);
+}
+
+.row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0.75rem 0;
+}
+
+.radio-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin: 0.75rem 0;
+}
+
+.radio {
+  display: inline-flex;
+  gap: 0.3rem;
+  align-items: center;
+  text-transform: capitalize;
+}
+
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.6rem;
+  font: inherit;
+  border-radius: 6px;
+}
+
+select {
+  font: inherit;
+  padding: 0.25rem 0.4rem;
+}
+
+button {
+  font: inherit;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid currentColor;
+  background: transparent;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.status {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.hint {
+  font-size: 0.82rem;
+  opacity: 0.7;
+  margin: 0.4rem 0;
+}
+
+.answer-card {
+  border: 1px solid rgba(127, 127, 127, 0.4);
+  border-radius: 8px;
+  margin-top: 0.75rem;
+  overflow: hidden;
+}
+
+.answer-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.82rem;
+  border-bottom: 1px solid rgba(127, 127, 127, 0.3);
+  flex-shrink: 0;
+}
+
+.answer-body {
+  display: block;
+  margin: 0;
+  padding: 0.7rem;
+  min-height: 4rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.answer-body pre {
+  overflow-x: auto;
+  padding: 0.6rem;
+  border-radius: 6px;
+  background: rgba(127, 127, 127, 0.15);
+}
+
+.answer-body code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.88em;
+}
+
+.answer-body > *:first-child {
+  margin-top: 0;
+}
+
+.answer-body > *:last-child {
+  margin-bottom: 0;
+}
+
+.answer-body p,
+.answer-body h1,
+.answer-body h2,
+.answer-body h3,
+.answer-body h4,
+.answer-body h5,
+.answer-body h6,
+.answer-body li {
+  text-align: left;
+}
+
+.answer-body ul,
+.answer-body ol {
+  margin: 0.4rem 0;
+  padding-left: 1.4rem;
+}
+
+.answer-body li {
+  margin: 0.15rem 0;
+}
+
+.answer-body blockquote {
+  margin: 0.5rem 0;
+  padding: 0.4rem 0.7rem;
+  border-left: 3px solid rgba(127, 127, 127, 0.5);
+  background: rgba(127, 127, 127, 0.08);
+  border-radius: 0 6px 6px 0;
+}
+
+.answer-body blockquote p {
+  margin: 0.2rem 0;
+}
+
+.answer-body hr {
+  border: 0;
+  border-top: 1px solid rgba(127, 127, 127, 0.4);
+  margin: 0.7rem 0;
+}
+
+.answer-body table {
+  border-collapse: collapse;
+  margin: 0.5rem 0;
+  width: 100%;
+  font-size: 0.88rem;
+  display: block;
+  overflow-x: auto;
+}
+
+.answer-body th,
+.answer-body td {
+  border: 1px solid rgba(127, 127, 127, 0.4);
+  padding: 0.3rem 0.55rem;
+  text-align: left;
+}
+
+.answer-body th {
+  background: rgba(127, 127, 127, 0.15);
+  font-weight: 700;
+}
+
+.answer-body a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.answer-body img {
+  max-width: 100%;
+  border-radius: 6px;
+}
+
+.form-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin: 0.75rem 0;
+  flex-wrap: wrap;
+}
+
+.settings-panel.is-loading {
+  opacity: 0.5;
+  pointer-events: none;
+  filter: grayscale(0.4);
+}
+
+.loading-indicator {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.85rem;
+  opacity: 0.8;
+  margin: 0.4rem 0;
+}
+
+.loading-indicator .spinner {
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 2px solid rgba(127, 127, 127, 0.35);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: trayask-spin 0.8s linear infinite;
+}
+
+@keyframes trayask-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.models-error {
+  font-size: 0.85rem;
+  color: #c0392b;
+  margin: 0.4rem 0;
+}
+
+/* E-04 native-minimal system: sections, cards, pills, segmented, compact rows. */
+
+.section {
+  margin: 0.9rem 0;
+}
+
+.section-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.65;
+}
+
+.card {
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 8px;
+  padding: 0.6rem 0.7rem;
+  margin: 0.5rem 0;
+  background: rgba(127, 127, 127, 0.06);
+}
+
+.card .form-row:last-child,
+.card .row:last-child {
+  margin-bottom: 0;
+}
+
+.compact-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid rgba(127, 127, 127, 0.25);
+  border-radius: 8px;
+  margin: 0.35rem 0;
+}
+
+.compact-row input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  padding: 0.3rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid rgba(127, 127, 127, 0.4);
+  background: transparent;
+  color: inherit;
+}
+
+.compact-row button {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+.compact-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  min-width: 4.5rem;
+}
+
+.pill {
+  display: inline-block;
+  font-size: 0.75rem;
+  line-height: 1;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(127, 127, 127, 0.45);
+  background: rgba(127, 127, 127, 0.12);
+  color: inherit;
+  white-space: nowrap;
+}
+
+.pill.is-saved {
+  background: rgba(127, 127, 127, 0.22);
+  font-weight: 600;
+}
+
+.seg {
+  display: flex;
+  gap: 0.15rem;
+  padding: 0.2rem;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 8px;
+  background: rgba(127, 127, 127, 0.08);
+  margin: 0.5rem 0;
+  flex-wrap: nowrap;
+}
+
+.seg-btn {
+  border: 0;
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  text-transform: capitalize;
+  background: transparent;
+  color: inherit;
+  flex: 1 1 auto;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.seg-btn.is-active {
+  background: rgba(127, 127, 127, 0.25);
+  font-weight: 700;
+}
+
+.empty-state {
+  font-size: 0.85rem;
+  opacity: 0.65;
+  text-align: center;
+  padding: 0.7rem 0.5rem;
+  border: 1px dashed rgba(127, 127, 127, 0.45);
+  border-radius: 8px;
+  margin: 0.5rem 0;
+}
+
+.provider-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.provider-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.82rem;
+  min-width: 0;
+}
+
+.provider-grid select,
+.provider-grid input {
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+  padding: 0.3rem 0.4rem;
+  border-radius: 6px;
+  border: 1px solid rgba(127, 127, 127, 0.4);
+  background: transparent;
+  color: inherit;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.panel textarea {
+  padding: 0.5rem;
+  min-height: 3.5rem;
+  flex-shrink: 0;
+}
+
+.panel .provider-grid,
+.panel .seg,
+.panel .hint,
+.panel .row {
+  flex-shrink: 0;
+}
+
+.panel .row {
+  margin: 0.5rem 0;
+}
+
+.panel .answer-card {
+  margin-top: 0.5rem;
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-self: stretch;
+  overflow: hidden;
+}
+
+.panel .answer-body {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  flex: 1 1 auto;
+  min-height: 4rem;
+  max-height: 100%;
+  overflow-y: auto;
+  text-align: left;
+  vertical-align: top;
+}
+
+.settings-panel {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.win-btn {
+  border: 1px solid rgba(127, 127, 127, 0.45);
+  border-radius: 6px;
+  padding: 0.15rem 0.5rem;
+  line-height: 1;
+  background: transparent;
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
+/* macOS traffic lights: borderless circles, top-left, glyphs on hover. */
+
+.traffic {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
+.tl {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
+.tl-close {
+  background: #ff5f57;
+}
+
+.tl-min {
+  background: #febc2e;
+}
+
+.tl-max {
+  background: #28c840;
+}
+
+.tl > svg {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Glyph appears on the hovered light only (not the whole cluster),
+   matching native traffic-light hover behavior. */
+.tl:hover > svg,
+.tl:focus-visible > svg {
+  opacity: 1;
+}
+
+/* E-11 panel color & style polish: accent system + pills + badges.
+   Appended at end to avoid conflicts with existing rules. No new deps. */
+@media (prefers-color-scheme: light) {
+  :root {
+    --accent: #2563eb;
+    --accent-soft: rgba(37, 99, 235, 0.12);
+    --ok: #0e9f6e;
+    --err: #c0392b;
+    --card-tint: rgba(37, 99, 235, 0.05);
+  }
+}
+
+.seg-btn.is-active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: transparent;
+  color: white;
+  font-weight: 600;
+}
+
+.btn-primary:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.btn-primary:disabled,
+.btn-danger:disabled,
+.btn-warn:disabled {
+  opacity: 0.55;
+}
+
+.btn-danger {
+  background: var(--err);
+  border-color: transparent;
+  color: white;
+  font-weight: 600;
+}
+
+.btn-danger:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.btn-warn {
+  background: var(--warn);
+  border-color: transparent;
+  color: #231a03;
+  font-weight: 600;
+}
+
+.btn-warn:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.status-pill {
+  display: inline-block;
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.status-pill.is-streaming {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+  animation: trayask-pulse 1.2s ease-in-out infinite;
+}
+
+.status-pill.is-done {
+  background: rgba(48, 196, 141, 0.14);
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.status-pill.is-error {
+  background: rgba(255, 107, 107, 0.14);
+  color: var(--err);
+  border-color: var(--err);
+}
+
+.status-pill.is-cancelled,
+.status-pill.is-idle {
+  background: rgba(127, 127, 127, 0.14);
+  color: inherit;
+  border-color: rgba(127, 127, 127, 0.45);
+  opacity: 0.85;
+}
+
+.using-badge {
+  display: inline-block;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+  max-width: 140px;
+}
+
+.using-badge.is-provider {
+  max-width: none;
+  flex-shrink: 0;
+}
+
+.using-badge.is-model {
+  max-width: 220px;
+  min-width: 0;
+}
+
+.using-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.using-label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.using-sep {
+  flex-shrink: 0;
+}
+
+.change-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  font: inherit;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid currentColor;
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.change-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.answer-card {
+  border-top: 2px solid var(--accent);
+}
+
+.answer-head {
+  background: var(--card-tint);
+}
+
+textarea:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.kbd {
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+  padding: 0.1rem 0.35rem;
+  border: 1px solid rgba(127, 127, 127, 0.4);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: rgba(127, 127, 127, 0.12);
+  white-space: nowrap;
+}
+
+@keyframes trayask-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* F-03 help page: spacing for help lists and paragraphs. */
+.help-list {
+  margin: 0.4rem 0;
+  padding-left: 1.4rem;
+}
+
+.help-section p {
+  line-height: 1.5;
+}
+.help-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  margin: 0.6rem auto 0;
+}

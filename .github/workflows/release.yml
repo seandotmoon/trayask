@@ -1,0 +1,62 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest, ubuntu-22.04, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: trayask/pnpm-lock.yaml
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Linux dependencies
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            xclip \
+            wl-clipboard
+
+      - name: Cargo test
+        working-directory: trayask/src-tauri
+        run: cargo test
+
+      - name: Install frontend dependencies
+        working-directory: trayask
+        run: pnpm install
+
+      - name: Build frontend
+        working-directory: trayask
+        run: pnpm build
+
+      - name: Build app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+        with:
+          # Updater note: keep latest.json universal across the 3-OS matrix (do not overwrite per-OS); set real OWNER/REPO endpoints + pubkey before first release.
+          projectPath: trayask
+          args: --verbose
