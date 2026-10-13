@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-          cache-dependency-path: trayask/pnpm-lock.yaml
+          cache-dependency-path: pnpm-lock.yaml
 
       - uses: dtolnay/rust-toolchain@stable
 
@@ -40,15 +40,13 @@ jobs:
             wl-clipboard
 
       - name: Cargo test
-        working-directory: trayask/src-tauri
+        working-directory: src-tauri
         run: cargo test
 
       - name: Install frontend dependencies
-        working-directory: trayask
         run: pnpm install
 
       - name: Build frontend
-        working-directory: trayask
         run: pnpm build
 
       - name: Build app
@@ -58,5 +56,5 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
         with:
           # Updater note: keep latest.json universal across the 3-OS matrix (do not overwrite per-OS); set real OWNER/REPO endpoints + pubkey before first release.
-          projectPath: trayask
+          projectPath: .
           args: --verbose

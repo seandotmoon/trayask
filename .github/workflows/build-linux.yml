@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-          cache-dependency-path: trayask/pnpm-lock.yaml
+          cache-dependency-path: pnpm-lock.yaml
 
       - uses: dtolnay/rust-toolchain@stable
 
@@ -34,11 +34,10 @@ jobs:
             wl-clipboard
 
       - name: Cargo test
-        working-directory: trayask/src-tauri
+        working-directory: src-tauri
         run: cargo test
 
       - name: Build frontend and app
-        working-directory: trayask
         run: |
           pnpm install
           pnpm build
