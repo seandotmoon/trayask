@@ -46,6 +46,17 @@ Autostart uses XDG autostart entries on Linux.
 Bundle targets: `deb` + `appimage` (see `tauri.conf.json`
 `bundle.targets`). Build with `pnpm tauri build` from `trayask/`.
 
+`beforeBuildCommand` runs `pnpm build` first so `dist/index.html` is embedded.
+A release compile without that file fails in `src-tauri/build.rs` instead of
+opening windows whose body is `asset not found: index.html`.
+
+## Blank window
+
+The panel is a transparent, frameless webview. On Linux, WebKitGTK's DMA-BUF
+renderer can draw that as an empty border. The process sets
+`WEBKIT_DISABLE_DMABUF_RENDERER=1` before GTK starts. Quit and relaunch after
+upgrading a build that showed empty panels.
+
 ## QA checklist (GNOME + X11)
 
 - [ ] Tray icon appears; left-click toggles the panel.

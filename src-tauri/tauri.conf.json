@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "identifier": "com.trayask.app",
   "build": {
+    "beforeBuildCommand": "pnpm build",
     "devUrl": "http://localhost:1420",
     "frontendDist": "../dist"
   },

@@ -3,6 +3,16 @@
 use tauri::Manager;
 
 fn main() {
+    // WebKitGTK's DMA-BUF renderer paints transparent, frameless windows as an
+    // empty border on many Linux GPUs (NVIDIA, and some Wayland compositors).
+    // Set this before GTK/WebKit are initialized. macOS and Windows do not
+    // read the variable. https://v2.tauri.app/develop/debug/linux-graphics/
+    #[cfg(target_os = "linux")]
+    // SAFETY: one write at process start, before GTK or any other thread reads the environment.
+    unsafe {
+        std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
+    }
+
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             trayask::platform::windows::show_panel(app);

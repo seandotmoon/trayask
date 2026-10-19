@@ -35,6 +35,11 @@ default = ["custom-protocol"]
 custom-protocol = ["tauri/custom-protocol"]
 
 [profile.release]
-lto = true
+# Full LTO (fat) plus GNU ld on Linux can garbage-collect the `include_bytes!`
+# payloads inside Tauri's phf asset map. The webview then opens as an empty
+# frame and the document body is "asset not found: index.html". macOS ld64
+# and MSVC keep those bytes, which is why only the Linux build broke.
+# Leave LTO off. Thin LTO still runs linker section GC on those bytes.
+lto = false
 codegen-units = 1
 panic = "abort"
