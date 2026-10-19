@@ -18,6 +18,18 @@ export const DEFAULT_PREFS: Prefs = {
 
 const KEY = "trayask.prefs.v1";
 
+/**
+ * Whether a window should reload saved prefs when it gains focus.
+ *
+ * The panel does: it may have been hidden while Settings saved. The settings
+ * window must not: Linux WebKitGTK fires `focus` when its native `<select>`
+ * popup closes, and reloading here snaps the provider dropdown back to the
+ * stored value (OpenAI) before Save.
+ */
+export function shouldReloadPrefsOnWindowFocus(label: string): boolean {
+  return label !== "settings";
+}
+
 function mergeDefaults(parsed: Partial<Prefs>): Prefs {
   return { ...DEFAULT_PREFS, ...parsed };
 }

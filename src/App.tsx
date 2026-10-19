@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type SyntheticEvent } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
@@ -6,6 +6,7 @@ import {
   FUNCTIONS,
   PROVIDERS,
   STATIC_MODELS,
+  providerIdFromSelect,
   type FunctionKind,
 } from "./lib/models";
 import {
@@ -13,6 +14,7 @@ import {
   loadPrefs,
   savePrefsBackend,
   loadPrefsBackend,
+  shouldReloadPrefsOnWindowFocus,
   type Prefs,
 } from "./lib/prefs";
 import { renderMarkdown } from "./lib/markdown";
@@ -48,6 +50,9 @@ function App() {
   const [modelsError, setModelsError] = useState("");
   const [providerMsg, setProviderMsg] = useState("");
   const lastFetched = useRef<{ base: string; key: string } | null>(null);
+  // True after the user edits Settings and before a prefs reload applies.
+  // An in-flight get_prefs must not snap the provider dropdown back.
+  const settingsDraft = useRef(false);
   const [shortcutErr, setShortcutErr] = useState<{
     kind: string;
     hint: string;
@@ -91,8 +96,10 @@ function App() {
       // non-Tauri (browser dev): default to panel = chat-only
     }
     // Backend file is the source of truth across windows + restarts.
+    // Skip if the user already moved the provider dropdown (Linux can
+    // deliver this IPC after the native select popup has closed).
     void loadPrefsBackend().then((p) => {
-      if (cancelled) return;
+      if (cancelled || settingsDraft.current) return;
       setPrefs(p);
       setProvider(p.provider_id);
       setModel(p.model_id);
@@ -223,6 +230,7 @@ function App() {
   sendRef.current = send;
 
   function applyPrefs(p: Prefs) {
+    settingsDraft.current = false;
     setPrefs(p);
     setProvider(p.provider_id);
     setModel(p.model_id);
@@ -244,8 +252,17 @@ function App() {
 
   useEffect(() => {
     // Panel may be hidden while settings change; refresh on focus.
+    // Settings must not: see shouldReloadPrefsOnWindowFocus.
+    let label = "panel";
+    try {
+      label = getCurrentWindow().label;
+    } catch {
+      // non-Tauri (browser dev): treat as the panel.
+    }
+    if (!shouldReloadPrefsOnWindowFocus(label)) return;
     const onFocus = () => {
       void loadPrefsBackend().then((p) => {
+        if (settingsDraft.current) return;
         applyPrefs(p);
       });
     };
@@ -323,7 +340,9 @@ function App() {
     return () => window.removeEventListener("keydown", onSlash);
   }, [isPanel]);
 
-  function handleProviderChange(id: string) {
+  function handleProviderChange(e: SyntheticEvent<HTMLSelectElement>) {
+    const id = providerIdFromSelect(e.currentTarget);
+    settingsDraft.current = true;
     setProvider(id);
     const first = STATIC_MODELS[id]?.[0] ?? "";
     setModel(first);
@@ -888,7 +907,8 @@ function App() {
                   id="s-provider"
                   value={provider}
                   disabled={modelsLoading}
-                  onChange={(e) => handleProviderChange(e.target.value)}
+                  onChange={handleProviderChange}
+                  onInput={handleProviderChange}
                 >
                   {PROVIDERS.map((p) => (
                     <option key={p.id} value={p.id}>
