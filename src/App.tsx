@@ -4,6 +4,7 @@ import { listen } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import {
   FUNCTIONS,
+  functionLabel,
   PROVIDERS,
   STATIC_MODELS,
   providerIdFromSelect,
@@ -835,7 +836,7 @@ function App() {
                 aria-pressed={fn === f}
                 onClick={() => setFn(f)}
               >
-                {f}
+                {functionLabel(f)}
               </button>
             ))}
           </div>
@@ -1073,7 +1074,7 @@ function App() {
                         disabled={modelsLoading}
                         onChange={() => setFn(f)}
                       />
-                      {f}
+                      {functionLabel(f)}
                     </label>
                   ))}
                 </div>
@@ -1219,7 +1220,10 @@ function App() {
               <h2 className="section-title">Panel basics</h2>
               <div className="card">
                 <ul className="help-list">
-                  <li>Pick a function pill (chat, explain, summarize, translate).</li>
+                  <li>
+                    Pick a function pill (fix grammar, explain, summarize,
+                    translate).
+                  </li>
                   <li>
                     Press <kbd className="kbd">{isMac ? "Cmd" : "Ctrl"}+Enter</kbd>{" "}
                     or click Send to ask.
@@ -1236,8 +1240,9 @@ function App() {
               <div className="card">
                 <p>
                   Each function sends your text with a fixed prompt: explain
-                  breaks it down, chat answers directly, summarize condenses it,
-                  and translate renders it in another language.
+                  breaks it down, fix grammar cleans up grammar, spelling,
+                  and punctuation without changing your voice, summarize
+                  condenses it, and translate renders it in another language.
                 </p>
               </div>
             </div>

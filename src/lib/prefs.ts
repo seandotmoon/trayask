@@ -1,9 +1,11 @@
 import { invoke } from "@tauri-apps/api/core";
 
+import { FUNCTIONS, type FunctionKind } from "./models";
+
 export type Prefs = {
   provider_id: string;
   model_id: string;
-  default_function: "explain" | "chat" | "summarize" | "translate";
+  default_function: FunctionKind;
   auto_submit: boolean;
   custom_base_url: string;
 };
@@ -11,7 +13,7 @@ export type Prefs = {
 export const DEFAULT_PREFS: Prefs = {
   provider_id: "openai",
   model_id: "gpt-4o-mini",
-  default_function: "chat",
+  default_function: "fix_grammar",
   auto_submit: true,
   custom_base_url: "",
 };
@@ -31,7 +33,11 @@ export function shouldReloadPrefsOnWindowFocus(label: string): boolean {
 }
 
 function mergeDefaults(parsed: Partial<Prefs>): Prefs {
-  return { ...DEFAULT_PREFS, ...parsed };
+  const merged = { ...DEFAULT_PREFS, ...parsed };
+  if (!FUNCTIONS.includes(merged.default_function)) {
+    return { ...merged, default_function: DEFAULT_PREFS.default_function };
+  }
+  return merged;
 }
 
 export function loadPrefs(): Prefs {

@@ -40,9 +40,10 @@ fn payload_for(event: &StreamEvent) -> StreamPayload {
 fn parse_function(s: Option<String>) -> FunctionKind {
     match s.unwrap_or_default().trim().to_ascii_lowercase().as_str() {
         "explain" => FunctionKind::Explain,
+        "fix_grammar" => FunctionKind::FixGrammar,
         "summarize" => FunctionKind::Summarize,
         "translate" => FunctionKind::Translate,
-        _ => FunctionKind::Chat,
+        _ => FunctionKind::FixGrammar,
     }
 }
 
@@ -534,6 +535,45 @@ mod validation_tests {
             ALLOWED_PROVIDERS,
             &["openai", "anthropic", "gemini", "custom"]
         );
+    }
+
+    #[test]
+    fn parse_function_maps_known_ids_case_insensitive() {
+        assert_eq!(
+            parse_function(Some("explain".into())),
+            FunctionKind::Explain
+        );
+        assert_eq!(
+            parse_function(Some("fix_grammar".into())),
+            FunctionKind::FixGrammar
+        );
+        assert_eq!(
+            parse_function(Some("summarize".into())),
+            FunctionKind::Summarize
+        );
+        assert_eq!(
+            parse_function(Some("translate".into())),
+            FunctionKind::Translate
+        );
+        assert_eq!(
+            parse_function(Some("  Fix_Grammar ".into())),
+            FunctionKind::FixGrammar
+        );
+    }
+
+    #[test]
+    fn parse_function_falls_back_to_fix_grammar_for_legacy_and_unknown() {
+        // Legacy `chat` id, other unknown values, and a missing arg all map
+        // to FixGrammar so an old panel can never select a removed function.
+        assert_eq!(
+            parse_function(Some("chat".into())),
+            FunctionKind::FixGrammar
+        );
+        assert_eq!(
+            parse_function(Some("banana".into())),
+            FunctionKind::FixGrammar
+        );
+        assert_eq!(parse_function(None), FunctionKind::FixGrammar);
     }
 
     #[test]
