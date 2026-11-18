@@ -3,9 +3,13 @@
 #[serde(rename_all = "snake_case")]
 pub enum FunctionKind {
     Explain,
-    Chat,
     Summarize,
     Translate,
+    /// Grammar/spelling fixer. Also the catch-all for any unrecognized value
+    /// (e.g. the legacy `"chat"` id in persisted prefs) so old settings files
+    /// keep parsing instead of resetting to defaults.
+    #[serde(other)]
+    FixGrammar,
 }
 
 #[allow(dead_code)]

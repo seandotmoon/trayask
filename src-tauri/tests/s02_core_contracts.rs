@@ -56,7 +56,7 @@ fn chat_request_serde_round_trip() {
 fn function_kind_serde_snake_case() {
     let cases = [
         (FunctionKind::Explain, "\"explain\""),
-        (FunctionKind::Chat, "\"chat\""),
+        (FunctionKind::FixGrammar, "\"fix_grammar\""),
         (FunctionKind::Summarize, "\"summarize\""),
         (FunctionKind::Translate, "\"translate\""),
     ];
@@ -88,7 +88,7 @@ fn all_prompts_nonempty_contain_query_and_distinct() {
     let query = "the quick brown fox 42";
     let kinds = [
         FunctionKind::Explain,
-        FunctionKind::Chat,
+        FunctionKind::FixGrammar,
         FunctionKind::Summarize,
         FunctionKind::Translate,
     ];
@@ -118,7 +118,7 @@ fn default_prefs_values() {
     let p = default_prefs();
     assert_eq!(p.provider_id, "openai");
     assert_eq!(p.model_id, "gpt-4o-mini");
-    assert_eq!(p.default_function, FunctionKind::Chat);
+    assert_eq!(p.default_function, FunctionKind::FixGrammar);
     assert!(p.auto_submit);
 }
 
@@ -138,7 +138,7 @@ fn prefs_from_empty_object_yields_defaults() {
     let p = prefs_from_json("{}").expect("parse {}");
     assert_eq!(p.provider_id, "openai");
     assert_eq!(p.model_id, "gpt-4o-mini");
-    assert_eq!(p.default_function, FunctionKind::Chat);
+    assert_eq!(p.default_function, FunctionKind::FixGrammar);
     assert!(p.auto_submit);
 }
 
@@ -146,6 +146,40 @@ fn prefs_from_empty_object_yields_defaults() {
 fn prefs_pretty_json_contains_newline() {
     let json = prefs_to_json(&default_prefs()).expect("serialize prefs");
     assert!(json.contains('\n'), "pretty JSON must contain a newline");
+}
+
+#[test]
+fn legacy_chat_pref_migrates_to_fix_grammar() {
+    // Legacy persisted prefs with `"chat"` — or any unrecognized value —
+    // deserialize to FixGrammar via `#[serde(other)]`, and re-serialize as
+    // `"fix_grammar"` so the next save self-heals the stored file.
+    for legacy in [
+        r#"{"default_function":"chat"}"#,
+        r#"{"default_function":"banana"}"#,
+    ] {
+        let p = prefs_from_json(legacy).expect("parse legacy prefs");
+        assert_eq!(p.default_function, FunctionKind::FixGrammar, "{legacy}");
+        let json = prefs_to_json(&p).expect("serialize migrated prefs");
+        assert!(
+            json.contains("\"fix_grammar\""),
+            "{legacy} must re-serialize as fix_grammar"
+        );
+        assert!(
+            !json.contains("\"chat\""),
+            "{legacy} must not keep the legacy chat id"
+        );
+    }
+}
+
+#[test]
+fn fix_grammar_prompt_is_minimal_proofreader() {
+    let out = build_prompt(FunctionKind::FixGrammar, "i went to the store");
+    assert!(out.contains("smallest possible changes"));
+    assert!(out.contains("i went to the store"));
+    assert!(
+        !out.contains("conversational"),
+        "old chat prompt text must be gone"
+    );
 }
 
 // ---- keys ----
@@ -197,7 +231,7 @@ fn mock_provider_streams_tokens_then_done() {
     let req = ChatRequest {
         provider: "mock".to_string(),
         model: "mock-model".to_string(),
-        function: FunctionKind::Chat,
+        function: FunctionKind::FixGrammar,
         query: "ping".to_string(),
     };
     let events = block_on(provider.chat_stream(req));

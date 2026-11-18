@@ -8,8 +8,8 @@ pub fn build_prompt(function: FunctionKind, query: &str) -> String {
         FunctionKind::Explain => format!(
             "You are a helpful assistant. Explain the following clearly and concisely:\n\n{query}"
         ),
-        FunctionKind::Chat => format!(
-            "You are a helpful conversational assistant. Respond to the following message:\n\n{query}"
+        FunctionKind::FixGrammar => format!(
+            "You are a meticulous proofreader. Fix only the grammar, spelling, and punctuation errors in the text below. Make the smallest possible changes: keep the author's word choice, voice, tone, and sentence structure exactly as they are. Do not rewrite or reorganize sentences, do not add or remove information, and do not change formatting. Reply with only the corrected text — no explanations, no comments.\n\n{query}"
         ),
         FunctionKind::Summarize => format!(
             "You are a helpful assistant. Summarize the following text in a few key points:\n\n{query}"

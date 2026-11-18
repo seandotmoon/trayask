@@ -90,10 +90,10 @@ OSes: macOS, Linux, Windows.
 | explain | anthropic | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] |
 | explain | gemini | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] |
 | explain | ollama | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] |
-| chat | openai | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] |
-| chat | anthropic | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] |
-| chat | gemini | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] |
-| chat | ollama | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] |
+| fix grammar | openai | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] |
+| fix grammar | anthropic | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] |
+| fix grammar | gemini | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] |
+| fix grammar | ollama | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] |
 | summarize | openai | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] |
 | summarize | anthropic | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] |
 | summarize | gemini | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] | [ ] / [ ] / [ ] |

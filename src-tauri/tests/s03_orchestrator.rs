@@ -15,7 +15,7 @@ fn test_request(query: String) -> ChatRequest {
     ChatRequest {
         provider: "mock".to_string(),
         model: "mock-model".to_string(),
-        function: FunctionKind::Chat,
+        function: FunctionKind::FixGrammar,
         query,
     }
 }

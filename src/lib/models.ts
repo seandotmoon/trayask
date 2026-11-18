@@ -72,5 +72,22 @@ export function providerIdFromSelect(select: ProviderSelectReading): string {
   return fromAttribute.length > 0 ? fromAttribute : fromValue;
 }
 
-export const FUNCTIONS = ["explain", "chat", "summarize", "translate"] as const;
+export const FUNCTIONS = [
+  "explain",
+  "fix_grammar",
+  "summarize",
+  "translate",
+] as const;
 export type FunctionKind = (typeof FUNCTIONS)[number];
+
+/** Display labels for function ids (ids are snake_case; labels are what the UI shows). */
+export const FUNCTION_LABELS: Record<FunctionKind, string> = {
+  explain: "explain",
+  fix_grammar: "fix grammar",
+  summarize: "summarize",
+  translate: "translate",
+};
+
+export function functionLabel(f: FunctionKind): string {
+  return FUNCTION_LABELS[f] ?? f;
+}

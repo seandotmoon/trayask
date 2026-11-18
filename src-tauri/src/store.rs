@@ -26,7 +26,7 @@ fn default_model_id() -> String {
 }
 
 fn default_function() -> FunctionKind {
-    FunctionKind::Chat
+    FunctionKind::FixGrammar
 }
 
 fn default_auto_submit() -> bool {
